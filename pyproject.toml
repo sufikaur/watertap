@@ -36,6 +36,7 @@ keywords = [
     "nawi",
 ]
 version = "1.6.dev0"
+requires-python = ">=3.10"
 
 dependencies = [
     # primary requirements for unit and property models
@@ -51,6 +52,10 @@ dependencies = [
     "pint<0.25",
 ]
 
+[project.urls]
+Homepage = "https://github.com/watertap-org/watertap"
+
+
 [project.optional-dependencies]
 testing = [
     "pytest",
@@ -60,13 +65,13 @@ testing = [
     "nbconvert",
     "idaes-flowsheet-processor >=0.1.dev4",
 ]
-notebooks = ["jupyterlab", "ipykernel"]
+notebooks = ["jupyter", "ipykernel"]
 oli_api = [
     "requests",
     "cryptography", # for encrypting OLI credentials
 ]
 
-all = ["idaes-pse[testing,notebooks,oli_api]"]
+all = ["watertap[testing,notebooks,oli_api]"]
 
 [tool.setuptools]
 zip-safe = false
