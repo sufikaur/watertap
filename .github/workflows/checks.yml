@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - name: Install Black
@@ -59,7 +59,7 @@ jobs:
     needs: [code-formatting]
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - name: Install dev dependencies
@@ -99,7 +99,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: Set up Python ${{ matrix.python-version }}
-      uses: conda-incubator/setup-miniconda@v3
+      uses: conda-incubator/setup-miniconda@v4
       with:
         activate-environment: watertap-dev
         python-version: ${{ matrix.python-version }}
@@ -195,7 +195,7 @@ jobs:
             os-version: windows-2022
     steps:
     - name: Set up Python ${{ matrix.python-version }}
-      uses: conda-incubator/setup-miniconda@v3
+      uses: conda-incubator/setup-miniconda@v4
       with:
         activate-environment: watertap
         python-version: ${{ matrix.python-version }}
@@ -250,7 +250,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: conda-incubator/setup-miniconda@v3
+      uses: conda-incubator/setup-miniconda@v4
       with:
         activate-environment: watertap-dev
         python-version: ${{ matrix.python-version }}
