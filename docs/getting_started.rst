@@ -22,6 +22,7 @@ Create a Conda environment (in this example, named ``watertap``) where WaterTAP 
 .. code-block:: shell
 
    conda create --name watertap --yes -c conda-forge python=3.11
+
 Activate the ``watertap`` environment using the command given below. If the environment was activated successfully, the environment's name will be displayed in the terminal prompt such as ``(watertap) project-directory $``.
 
 .. code-block:: shell
@@ -139,11 +140,10 @@ For WaterTAP developers
 This section is for developers who plan to modify or contribute to WaterTAP's codebase. Typically, *contributing to WaterTAP* will involve opening a Pull Request (PR) in WaterTAP's repository. For more information, refer to :ref:`developer-guide`.
 
 Create a Conda environment (in this example, named ``watertap-dev``) where WaterTAP and all development dependencies will be installed, then activate it:
+
 .. code-block:: shell
 
-   conda create --name watertap-dev --yes -c conda-forge python=3.11 cyipopt reaktoro
-   conda activate watertap-dev
-
+   conda create --name watertap-dev --yes -c conda-forge python=3.11 cyipopt reaktoro && conda activate watertap-dev
 Clone the WaterTAP repository to your local development machine using ``git clone``, then enter the newly created ``watertap`` subdirectory:
 
 .. code-block:: shell
