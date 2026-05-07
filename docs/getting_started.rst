@@ -21,8 +21,7 @@ Create a Conda environment (in this example, named ``watertap``) where WaterTAP 
 
 .. code-block:: shell
 
-   conda create --name watertap --yes python=3.11
-
+   conda create --name watertap --yes -c conda-forge python=3.11
 Activate the ``watertap`` environment using the command given below. If the environment was activated successfully, the environment's name will be displayed in the terminal prompt such as ``(watertap) project-directory $``.
 
 .. code-block:: shell
@@ -58,7 +57,7 @@ Create a Conda environment (in this example, named ``watertap``) where WaterTAP 
 
 .. code-block:: shell
 
-   conda create --name watertap --yes python=3.11
+   conda create --name watertap --yes -c conda-forge python=3.11
 
 Activate the ``watertap`` environment using the command given below. If the environment was activated successfully, the environment's name will be displayed in the terminal prompt such as ``(watertap) project-directory $``.
 
@@ -156,7 +155,7 @@ Install WaterTAP and the development dependencies using ``pip``:
 .. code-block:: shell
 
    pip install -e .[dev]
-   
+
 If needed, or if this is your first time installing IDAES or WaterTAP on your machine, run the following line from the same environment where WaterTAP was installed.
 
 .. code-block:: shell
