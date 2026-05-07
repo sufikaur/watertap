@@ -139,11 +139,11 @@ For WaterTAP developers
 
 This section is for developers who plan to modify or contribute to WaterTAP's codebase. Typically, *contributing to WaterTAP* will involve opening a Pull Request (PR) in WaterTAP's repository. For more information, refer to :ref:`developer-guide`.
 
-Create a Conda environment (in this example, named ``watertap-dev``) where WaterTAP and all dependendencies needed for development will be installed, then activate it:
-
+Create a Conda environment (in this example, named ``watertap-dev``) where WaterTAP and all development dependencies will be installed, then activate it:
 .. code-block:: shell
 
-   conda create --name watertap-dev --yes python=3.11 cyipopt reaktoro && conda activate watertap-dev
+   conda create --name watertap-dev --yes -c conda-forge python=3.11 cyipopt reaktoro
+   conda activate watertap-dev
 
 Clone the WaterTAP repository to your local development machine using ``git clone``, then enter the newly created ``watertap`` subdirectory:
 
@@ -151,12 +151,12 @@ Clone the WaterTAP repository to your local development machine using ``git clon
 
    git clone https://github.com/watertap-org/watertap && cd watertap
 
-Install WaterTAP and the development dependencies using ``pip`` :
+Install WaterTAP and the development dependencies using ``pip``:
 
 .. code-block:: shell
 
    pip install -e .[dev]
-
+   
 If needed, or if this is your first time installing IDAES or WaterTAP on your machine, run the following line from the same environment where WaterTAP was installed.
 
 .. code-block:: shell
