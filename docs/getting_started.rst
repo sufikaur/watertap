@@ -144,6 +144,7 @@ Create a Conda environment (in this example, named ``watertap-dev``) where Water
 .. code-block:: shell
 
    conda create --name watertap-dev --yes -c conda-forge python=3.11 cyipopt reaktoro && conda activate watertap-dev
+
 Clone the WaterTAP repository to your local development machine using ``git clone``, then enter the newly created ``watertap`` subdirectory:
 
 .. code-block:: shell
