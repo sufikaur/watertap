@@ -52,6 +52,12 @@ jobs:
       - name: Run Black to verify that the committed code is formatted
         run: |
           black --check .
+      - name: Environment summary 
+        uses: ./.github/actions/env-summary.yml
+        with:
+          python-version: '3.11'
+          os: ubuntu-latest
+          job-name: code-formatting
 
   pylint:
     name: Code linting (pylint)
@@ -66,6 +72,12 @@ jobs:
         run: |
           pip install -e ".[dev]"
           pip list
+      - name: Environment summary
+        uses: ./.github/actions/env-summary.yml
+        with:
+          python-version: '3.11'
+          os: ubuntu-latest
+          job-name: pylint
       - name: Run pylint
         run: |
           pylint watertap
@@ -126,6 +138,12 @@ jobs:
         echo '::group::Output of "idaes get-extensions" command'
         idaes get-extensions --extra petsc --verbose
         echo '::endgroup::'
+    - name: Environment summary
+      uses: ./.github/actions/env-summary.yml
+      with:
+        python-version: ${{ matrix.python-version }}
+        os: ${{ matrix.os }}
+        job-name: tests
     - name: Add coverage report pytest options
       if: matrix.coverage
       run:
@@ -229,6 +247,12 @@ jobs:
         echo '::group::Output of "idaes get-extensions" command'
         idaes get-extensions --extra petsc --verbose
         echo '::endgroup::'
+    - name: Environment summary 
+      uses: ./.github/actions/env-summary.yml
+      with:
+        python-version: ${{ matrix.python-version }}
+        os: ${{ matrix.os }}
+        job-name: user-mode-pytest
     - name: Run pytest
       run: |
         pytest --pyargs watertap
@@ -281,7 +305,12 @@ jobs:
         jupyter kernelspec list
         python -m ipykernel install --user --name "${{ env.WATERTAP_KERNEL_NAME }}"
         jupyter kernelspec list
-
+    - name: Environment summary
+      uses: ./.github/actions/env-summary.yml
+      with:
+        python-version: ${{ matrix.python-version }}
+        os: ${{ matrix.os }}
+        job-name: notebooks
     - name: Run pytest with nbmake
       run: |
         pytest --nbmake --nbmake-kernel="${{ env.WATERTAP_KERNEL_NAME }}" **/*.ipynb
