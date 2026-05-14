@@ -53,7 +53,7 @@ jobs:
         run: |
           black --check .
       - name: Environment summary 
-        uses: ./.github/actions/env-summary.yml
+        uses: ./.github/actions/environment-summary
         with:
           python-version: '3.11'
           os: ubuntu-latest
@@ -73,7 +73,7 @@ jobs:
           pip install -e ".[dev]"
           pip list
       - name: Environment summary
-        uses: ./.github/actions/env-summary.yml
+        uses: ./.github/actions/environment-summary
         with:
           python-version: '3.11'
           os: ubuntu-latest
@@ -139,7 +139,7 @@ jobs:
         idaes get-extensions --extra petsc --verbose
         echo '::endgroup::'
     - name: Environment summary
-      uses: ./.github/actions/env-summary.yml
+      uses: ./.github/actions/environment-summary
       with:
         python-version: ${{ matrix.python-version }}
         os: ${{ matrix.os }}
@@ -248,7 +248,7 @@ jobs:
         idaes get-extensions --extra petsc --verbose
         echo '::endgroup::'
     - name: Environment summary 
-      uses: ./.github/actions/env-summary.yml
+      uses: ./.github/actions/environment-summary
       with:
         python-version: ${{ matrix.python-version }}
         os: ${{ matrix.os }}
@@ -306,7 +306,7 @@ jobs:
         python -m ipykernel install --user --name "${{ env.WATERTAP_KERNEL_NAME }}"
         jupyter kernelspec list
     - name: Environment summary
-      uses: ./.github/actions/env-summary.yml
+      uses: ./.github/actions/environment-summary
       with:
         python-version: ${{ matrix.python-version }}
         os: ${{ matrix.os }}
