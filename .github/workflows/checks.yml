@@ -52,12 +52,6 @@ jobs:
       - name: Run Black to verify that the committed code is formatted
         run: |
           black --check .
-      - name: Environment summary 
-        uses: ./.github/actions/environment-summary
-        with:
-          python-version: '3.11'
-          os: ubuntu-latest
-          job-name: code-formatting
 
   pylint:
     name: Code linting (pylint)
@@ -214,6 +208,7 @@ jobs:
           - os: win64
             os-version: windows-2022
     steps:
+    - uses: actions/checkout@v6
     - name: Set up Python ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v4
       with:
