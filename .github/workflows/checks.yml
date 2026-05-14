@@ -104,6 +104,8 @@ jobs:
         activate-environment: watertap-dev
         python-version: ${{ matrix.python-version }}
         miniforge-version: latest
+        channels: conda-forge
+        conda-remove-defaults: 'true'
     - name: Install dependencies
       run: |
         echo '::group::Output of "conda install" commands'
@@ -199,6 +201,8 @@ jobs:
       with:
         activate-environment: watertap
         python-version: ${{ matrix.python-version }}
+        channels: conda-forge
+        conda-remove-defaults: 'true'
     - name: Define install URL (default)
       env:
         _repo_full_name: watertap-org/watertap
@@ -254,6 +258,8 @@ jobs:
       with:
         activate-environment: watertap-dev
         python-version: ${{ matrix.python-version }}
+        channels: conda-forge
+        conda-remove-defaults: 'true'
     - name: Install dependencies
       run: |
         echo '::group::Output of "conda install" commands'
