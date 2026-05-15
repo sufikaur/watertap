@@ -241,12 +241,6 @@ jobs:
         echo '::group::Output of "idaes get-extensions" command'
         idaes get-extensions --extra petsc --verbose
         echo '::endgroup::'
-    - name: Environment summary 
-      uses: ./.github/actions/environment-summary
-      with:
-        python-version: ${{ matrix.python-version }}
-        os: ${{ matrix.os }}
-        job-name: user-mode-pytest
     - name: Run pytest
       run: |
         pytest --pyargs watertap
