@@ -215,7 +215,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
         channels: conda-forge
         conda-remove-defaults: 'true'
-    - uses: actions/checkout@v6
     - name: Define install URL (default)
       env:
         _repo_full_name: watertap-org/watertap
