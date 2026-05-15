@@ -121,8 +121,8 @@ jobs:
         # Install WaterTAP + dev dependencies from pyproject.toml
         pip install -e ".[dev]"
         echo '::endgroup::'
-        echo '::group::Output of "conda install -c conda-forge cyipopt" command'
-        conda install -c conda-forge cyipopt
+        echo '::group::Output of "conda install -c conda-forge reaktoro cyipopt" command'
+        conda install -c conda-forge reaktoro cyipopt
         echo '::endgroup::'
         echo '::group::Display installed packages'
         conda list
