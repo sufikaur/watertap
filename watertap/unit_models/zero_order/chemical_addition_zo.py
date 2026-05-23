@@ -70,6 +70,7 @@ class ChemicalAdditionZOData(ZeroOrderBaseData):
         )
 
         self.chemical_flow_mass = pyo.Var(
+            initialize=1,
             units=pyo.units.kg / pyo.units.s,
             bounds=(0, None),
             doc="Mass flow rate of chemical solution",
