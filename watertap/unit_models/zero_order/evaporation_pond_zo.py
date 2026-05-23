@@ -13,7 +13,7 @@
 This module contains a zero-order representation of an evaporation pond unit
 model.
 
-Evaporation rate is from Jensen & Haise (1963)
+Evaporation rate from Jensen & Haise (1963)
 Evaporation pond model from Section 10. Membrane Concentrate Disposal: Practices and Regulation (2006)
 """
 
@@ -41,54 +41,44 @@ class EvaporationPondZOData(ZeroOrderBaseData):
         self._tech_type = "evaporation_pond"
 
         self.air_temperature = pyo.Var(
-            self.flowsheet().time,
             initialize=298,
             units=pyo.units.kelvin,
             doc="Air temperature",
         )
 
         self.solar_radiation = pyo.Var(
-            self.flowsheet().time,
             units=pyo.units.MJ / pyo.units.m**2 / pyo.units.day,
-            doc="Daily solar radiation incident",
+            doc="Daily solar radiation incident (average GHI for location)",
         )
 
-        self.dike_height = pyo.Var(
-            self.flowsheet().time, units=pyo.units.ft, doc="Pond dike height"
-        )
+        self.dike_height = pyo.Var(units=pyo.units.ft, doc="Pond dike height")
 
         self.evaporation_rate_adj_factor = pyo.Var(
-            self.flowsheet().time,
             units=pyo.units.dimensionless,
             doc="Factor to adjust evaporation rate of pure water",
         )
 
         self.evap_rate_calc_a_parameter = pyo.Var(
-            self.flowsheet().time,
             units=(pyo.units.mm * pyo.units.m**2) / pyo.units.MJ,
             doc="Evaporation rate calculation parameter A",
         )
 
         self.evap_rate_calc_b_parameter = pyo.Var(
-            self.flowsheet().time,
             units=pyo.units.degK**-1,
             doc="Evaporation rate calculation parameter B",
         )
 
         self.evap_rate_calc_c_parameter = pyo.Var(
-            self.flowsheet().time,
             units=pyo.units.dimensionless,
             doc="Evaporation rate calculation parameter C",
         )
 
         self.adj_area_calc_a_parameter = pyo.Var(
-            self.flowsheet().time,
             units=pyo.units.acres,
             doc="Adjusted area calculation parameter A",
         )
 
         self.adj_area_calc_b_parameter = pyo.Var(
-            self.flowsheet().time,
             units=pyo.units.dimensionless,
             doc="Adjusted area calculation parameter B",
         )
@@ -104,7 +94,6 @@ class EvaporationPondZOData(ZeroOrderBaseData):
         self._fixed_perf_vars.append(self.adj_area_calc_b_parameter)
 
         self.area = pyo.Var(
-            self.flowsheet().time,
             initialize=1,
             units=pyo.units.acres,
             bounds=(0, None),
@@ -112,66 +101,59 @@ class EvaporationPondZOData(ZeroOrderBaseData):
         )
 
         self.adj_area = pyo.Var(
-            self.flowsheet().time,
             units=pyo.units.acres,
             doc="Adjusted pond area needed",
         )
 
         self.evaporation_rate_pure = pyo.Var(
-            self.flowsheet().time,
             units=pyo.units.mm / pyo.units.d,
             doc="Calculated evaporation rate of pure water",
         )
 
         self.evaporation_rate_salt = pyo.Var(
-            self.flowsheet().time,
             units=(pyo.units.gallons / pyo.units.minute / pyo.units.acre),
             doc="Pure water evaporation rate adjusted for salinity",
         )
 
-        @self.Constraint(
-            self.flowsheet().time, doc="Evaporation rate of pure water constraint"
-        )
-        def evap_rate_pure_constraint(b, t):
-            temp_C = b.air_temperature[t] - 273.15 * pyo.units.degK
+        @self.Constraint(doc="Evaporation rate of pure water")
+        def evap_rate_pure_constraint(b):
+            temp_C = b.air_temperature - 273.15 * pyo.units.degK
             temp_term = pyo.units.convert(
-                b.evap_rate_calc_b_parameter[t] * temp_C
-                + b.evap_rate_calc_c_parameter[t],
+                b.evap_rate_calc_b_parameter * temp_C + b.evap_rate_calc_c_parameter,
                 to_units=pyo.units.dimensionless,
             )
-            return b.evaporation_rate_pure[t] == pyo.units.convert(
-                b.evap_rate_calc_a_parameter[t] * temp_term * b.solar_radiation[t],
+            return b.evaporation_rate_pure == pyo.units.convert(
+                b.evap_rate_calc_a_parameter * temp_term * b.solar_radiation,
                 to_units=pyo.units.mm / pyo.units.d,
             )
 
         @self.Constraint(
-            self.flowsheet().time,
-            doc="Adjusted evaporation rate for salinity constraint",
+            doc="Adjusted evaporation rate for salinity",
         )
-        def evap_rate_salt_constraint(b, t):
+        def evap_rate_salt_constraint(b):
             evap_rate_gal_min_acre = pyo.units.convert(
-                b.evaporation_rate_pure[t],
+                b.evaporation_rate_pure,
                 to_units=(pyo.units.gallons / pyo.units.minute / pyo.units.acre),
             )
-            return b.evaporation_rate_salt[t] == pyo.units.convert(
-                evap_rate_gal_min_acre * b.evaporation_rate_adj_factor[t],
+            return b.evaporation_rate_salt == pyo.units.convert(
+                evap_rate_gal_min_acre * b.evaporation_rate_adj_factor,
                 to_units=(pyo.units.gallons / pyo.units.minute / pyo.units.acre),
             )
 
-        @self.Constraint(self.flowsheet().time, doc="Base area constraint")
-        def area_constraint(b, t):
-            return b.properties_byproduct[t].flow_vol == pyo.units.convert(
-                b.evaporation_rate_salt[t] * b.area[t],
+        @self.Constraint(doc="Base area")
+        def area_constraint(b):
+            return b.properties_byproduct[0].flow_vol == pyo.units.convert(
+                b.evaporation_rate_salt * b.area,
                 to_units=pyo.units.m**3 / pyo.units.second,
             )
 
-        @self.Constraint(self.flowsheet().time, doc="Adjusted area constraint")
-        def area_adj_constraint(b, t):
-            area = b.area[t] / pyo.units.acres
-            dike_ht = b.dike_height[t] / pyo.units.ft
-            adj_factor = 1 + b.adj_area_calc_b_parameter[t] * dike_ht / area**0.5
-            return b.adj_area[t] == pyo.units.convert(
-                b.adj_area_calc_a_parameter[t] * area * adj_factor,
+        @self.Constraint(doc="Adjusted area")
+        def area_adj_constraint(b):
+            area = b.area / pyo.units.acres
+            dike_ht = b.dike_height / pyo.units.ft
+            adj_factor = 1 + b.adj_area_calc_b_parameter * dike_ht / area**0.5
+            return b.adj_area == pyo.units.convert(
+                b.adj_area_calc_a_parameter * area * adj_factor,
                 to_units=pyo.units.acres,
             )
 
@@ -189,8 +171,6 @@ class EvaporationPondZOData(ZeroOrderBaseData):
         General method for costing evaporation pond. Capital cost is based on the pond area and
         other pond construction parameters.
         """
-
-        t0 = blk.flowsheet().time.first()
 
         # Get parameter dict from database
         parameter_dict = blk.unit_model.config.database.get_unit_operation_parameters(
@@ -232,13 +212,13 @@ class EvaporationPondZOData(ZeroOrderBaseData):
         )
 
         expr = pyo.units.convert(
-            blk.unit_model.adj_area[t0]
+            blk.unit_model.adj_area
             * (
                 A
                 + B * liner_thickness
                 + C * land_cost
                 + D * land_clearing_cost
-                + E * blk.unit_model.dike_height[t0]
+                + E * blk.unit_model.dike_height
             ),
             to_units=blk.config.flowsheet_costing_block.base_currency,
         )
@@ -251,5 +231,5 @@ class EvaporationPondZOData(ZeroOrderBaseData):
 
         # Register flows
         blk.config.flowsheet_costing_block.cost_flow(
-            blk.unit_model.electricity[t0], "electricity"
+            blk.unit_model.electricity[0], "electricity"
         )
