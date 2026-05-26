@@ -6,6 +6,13 @@ default: # default is for wedge wire screen
     basis: flow_vol
     cost_factor: None
     reference: Voutchkov, N. (2018). Desalination Project Cost Estimating and Management. Figure 4.6
+    validity_range:
+      lower_bound:
+        value: 10000 # estimated
+        units: m^3/day
+      upper_bound:
+        value: 400000
+        units: m^3/day
     reference_state:
       value: 1
       units: m^3/day
@@ -34,6 +41,13 @@ drum:
     basis: flow_vol
     cost_factor: None
     reference: Voutchkov, N. (2018). Desalination Project Cost Estimating and Management. Figure 4.5
+    validity_range:
+      lower_bound:
+        value: 10000 # estimated
+        units: m^3/day
+      upper_bound:
+        value: 400000
+        units: m^3/day
     reference_state:
       value: 1
       units: m^3/day
@@ -62,6 +76,13 @@ band:
     basis: flow_vol
     cost_factor: None
     reference: Voutchkov, N. (2018). Desalination Project Cost Estimating and Management. Figure 4.5
+    validity_range:
+      lower_bound:
+        value: 10000 # estimated
+        units: m^3/day
+      upper_bound:
+        value: 400000
+        units: m^3/day
     reference_state:
       value: 1
       units: m^3/day
@@ -90,6 +111,13 @@ micro:
     basis: flow_vol
     cost_factor: None
     reference: Voutchkov, N. (2018). Desalination Project Cost Estimating and Management. Figure 4.7
+    validity_range:
+      lower_bound:
+        value: 10000 # estimated
+        units: m^3/day
+      upper_bound:
+        value: 400000
+        units: m^3/day
     reference_state:
       value: 1
       units: m^3/day
