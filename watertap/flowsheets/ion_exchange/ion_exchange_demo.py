@@ -129,6 +129,29 @@ def ix_build(ions, target_ion=None, hazardous_waste=False, regenerant="NaCl"):
     m.fs.feed.properties[0].conc_mass_phase_comp[...]
     m.fs.product.properties[0].conc_mass_phase_comp[...]
 
+    # Add costing blocks to the flowsheet
+    # Here, the ion exchange model has its own unit-level costing Block
+    m.fs.ion_exchange.costing = UnitModelCostingBlock(
+        flowsheet_costing_block=m.fs.costing  # Indicating which flowsheet costing block to use to aggregate unit-level costs to the system-level costs
+    )
+    # Call cost_process() method to create system-wide global parameters and add aggregating constraints to costing model
+    m.fs.costing.cost_process()
+    # Designate the volumetric flow on the Product block to be the stream used as the annual water production
+    m.fs.costing.add_annual_water_production(
+        m.fs.product.properties[0].flow_vol_phase["Liq"]
+    )
+    # Add LCOW variable to costing block
+    m.fs.costing.add_LCOW(m.fs.product.properties[0].flow_vol_phase["Liq"])
+    # Add specific energy consumption variable to costing block
+    m.fs.costing.add_specific_energy_consumption(
+        m.fs.product.properties[0].flow_vol_phase["Liq"]
+    )
+    m.fs.costing.add_flow_component_breakdown(
+        "NaCl",
+        m.fs.product.properties[0].flow_vol_phase["Liq"],
+        name="regenerant_usage",
+    )
+
     # Arcs are used to "connect" Ports on unit process models to Ports on other unit process models
     # For example, in this next line the outlet Port on the Feed model is connected to the inlet Port on the ion exchange model
     m.fs.feed_to_ix = Arc(source=m.fs.feed.outlet, destination=ix.inlet)
@@ -314,6 +337,10 @@ def display_results(m):
     )
     print(
         f'{"Specific Energy Consumption":<40s}{f"{m.fs.costing.specific_energy_consumption():<39,.5f}"}{"kWh/m3":<40s}'
+    )
+    regen_usage = m.fs.costing.regenerant_usage_component["fs.ion_exchange"]
+    print(
+        f'{f"Specific {ix.config.regenerant} Consumption":<40s}{f"{regen_usage():<39,.5f}"}{"kg/m3":<40s}'
     )
     print(
         f'{f"Annual Regenerant cost ({ix.config.regenerant})":<40s}{f"${m.fs.costing.aggregate_flow_costs[ix.config.regenerant]():<39,.2f}"}{"$/yr":<40s}'
