@@ -281,7 +281,7 @@ def test_costing():
     m.fs.costing.base_currency = pyunits.USD_2007
     m.fs.unit = EvaporationPondZO(property_package=m.fs.params, database=m.db)
 
-    flow_vol = 0.0416 * pyunits.Mgallons / pyunits.day
+    flow_vol = 0.04161 * pyunits.Mgallons / pyunits.day
     rho = 1000 * pyunits.kg / pyunits.m**3
     conc = 100 * pyunits.kg / pyunits.m**3
     flow_mass = rho * flow_vol
@@ -319,8 +319,11 @@ def test_costing():
 
     assert isinstance(m.fs.unit.costing.capital_cost, Var)
     assert isinstance(m.fs.unit.costing.capital_cost_constraint, Constraint)
-    assert pytest.approx(value(m.fs.unit.area), rel=1e-3) == 9.99437
-    assert pytest.approx(value(m.fs.unit.adj_area), rel=1e-3) == 16.6973
+    assert pytest.approx(value(m.fs.unit.area), rel=1e-3) == 10
+    assert pytest.approx(value(m.fs.unit.adj_area), rel=1e-3) == 16.705
+    assert pytest.approx(value(m.fs.unit.costing.cost_factor), rel=1e-3) == 1.0
+    # Capital cost = $737,045 from reference equation
+    assert pytest.approx(value(m.fs.unit.costing.capital_cost), rel=1e-3) == 737045
     assert pytest.approx(value(m.fs.costing.LCOW), rel=1e-3) == 0.96967
     # Total capital cost = $743,376 from worksheet in reference
-    assert pytest.approx(value(m.fs.costing.total_capital_cost), rel=1e-3) == 774628.72
+    assert pytest.approx(value(m.fs.costing.total_capital_cost), rel=1e-3) == 774789
