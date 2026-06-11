@@ -30,7 +30,6 @@ env:
   PYTEST_ADDOPTS: "--color=yes"
   PIP_PROGRESS_BAR: "off"
   WATERTAP_KERNEL_NAME: watertap-dev
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
 
