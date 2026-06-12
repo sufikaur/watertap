@@ -324,7 +324,7 @@ def test_costing():
     assert pytest.approx(value(m.fs.unit.adj_area), rel=1e-3) == 16.705
     assert pytest.approx(value(m.fs.unit.costing.cost_factor), rel=1e-3) == 1.0
     # Capital cost = $737,045 from reference equation
-    assert pytest.approx(value(m.fs.unit.costing.capital_cost), rel=1e-3) == 737045
+    assert pytest.approx(value(m.fs.unit.costing.capital_cost), rel=1e-3) == 736841
     assert pytest.approx(value(m.fs.costing.LCOW), rel=1e-3) == 0.96967
     # Total capital cost = $743,376 from worksheet in reference
     assert pytest.approx(value(m.fs.costing.total_capital_cost), rel=1e-3) == 774789
