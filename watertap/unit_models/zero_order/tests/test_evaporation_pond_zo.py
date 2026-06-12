@@ -27,7 +27,6 @@ from pyomo.environ import (
 from pyomo.util.check_units import assert_units_consistent
 
 from idaes.core import FlowsheetBlock
-from watertap.core.solvers import get_solver
 from idaes.core.util.model_statistics import degrees_of_freedom
 from idaes.core.util.testing import initialization_tester
 from idaes.core import UnitModelCostingBlock
@@ -36,6 +35,7 @@ from watertap.unit_models.zero_order import EvaporationPondZO
 from watertap.core.wt_database import Database
 from watertap.core.zero_order_properties import WaterParameterBlock
 from watertap.costing.zero_order_costing import ZeroOrderCosting
+from watertap.core.solvers import get_solver
 
 solver = get_solver()
 
@@ -281,6 +281,7 @@ def test_costing():
     m.fs.costing.base_currency = pyunits.USD_2007
     m.fs.unit = EvaporationPondZO(property_package=m.fs.params, database=m.db)
 
+    # Flow rate is chosen to give 10 acre pond size
     flow_vol = 0.04161 * pyunits.Mgallons / pyunits.day
     rho = 1000 * pyunits.kg / pyunits.m**3
     conc = 100 * pyunits.kg / pyunits.m**3

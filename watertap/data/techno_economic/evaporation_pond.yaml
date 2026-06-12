@@ -48,7 +48,7 @@ default:
     land_cost:
       value: 5000
       units: acre^-1 
-    land_clearing_cost:
+    land_clearing_cost: # default is for medium wooded land type
       value: 4000
       units: acre^-1     
     cost_per_acre_a_parameter:
