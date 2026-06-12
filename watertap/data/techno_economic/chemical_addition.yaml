@@ -22,8 +22,9 @@ alum:
     value: 10
     units: mg/L
   solution_density:
-    value: 1360
+    value: 1450
     units: kg/m^3
+    reference: https://www.pentachemicals.eu/data/Bezpecnostni_listy/en/Aluminium%20sulfate%20solution%2050%20in%20water_1459_1.0.pdf
   ratio_in_solution:
     value: 0.5
     units: dimensionless

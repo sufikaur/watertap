@@ -198,7 +198,7 @@ flow_dict = {
 }
 
 lcow_dict = {
-    "alum": 0.05079,
+    "alum": 0.05414,
     "anhydrous_ammonia": 0.0008694,
     "ammonia": 0.0003014,
     "anti-scalant": 0.01098,
