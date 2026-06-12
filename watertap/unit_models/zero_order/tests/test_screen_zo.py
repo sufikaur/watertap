@@ -179,16 +179,16 @@ db = Database()
 params = db._get_technology("screen")
 
 lcow_dict = {
-    "default": 0.0015717,  # wedge screen is default
-    "drum": 0.003006,
+    "default": 0.001492,  # wedge screen is default
+    "drum": 0.002957,
     "band": 0.002353,
-    "micro": 0.002146,
+    "micro": 0.002038,
 }
 capex_dict = {
-    "default": 1448724.547,  # ~1.42M from reference
-    "drum": 2771463.98,  # ~2.6M from reference
+    "default": 1375851.92,  # ~1.42M from reference
+    "drum": 2726267.92,  # ~2.6M from reference
     "band": 2169620.73,  # ~2.1M from reference
-    "micro": 1978224.86,  # ~1.95M from reference
+    "micro": 1879293.90,  # ~1.95M from reference
 }
 
 
