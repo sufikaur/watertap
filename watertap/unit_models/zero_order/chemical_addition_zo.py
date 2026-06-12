@@ -83,16 +83,6 @@ class ChemicalAdditionZOData(ZeroOrderBaseData):
         self._perf_var_dict["Chemical Dosage"] = self.chemical_dosage
         self._perf_var_dict["Chemical Flow"] = self.chemical_flow_vol
 
-        def rule_chem_flow_vol(blk):
-            return blk.chemical_flow_vol[0] == pyo.units.convert(
-                blk.chemical_dosage
-                * blk.properties[0].flow_vol
-                / (blk.solution_density * blk.ratio_in_solution),
-                to_units=pyo.units.m**3 / pyo.units.s,
-            )
-
-        self.chemical_flow_constraint = pyo.Constraint(rule=rule_chem_flow_vol)
-
         def rule_chem_flow_mass(blk):
             return blk.chemical_flow_mass == pyo.units.convert(
                 blk.chemical_dosage
@@ -102,6 +92,14 @@ class ChemicalAdditionZOData(ZeroOrderBaseData):
             )
 
         self.chemical_flow_mass_constraint = pyo.Constraint(rule=rule_chem_flow_mass)
+
+        def rule_chem_flow_vol(blk):
+            return blk.chemical_flow_vol[0] == pyo.units.convert(
+                blk.chemical_flow_mass / blk.solution_density,
+                to_units=pyo.units.m**3 / pyo.units.s,
+            )
+
+        self.chemical_flow_vol_constraint = pyo.Constraint(rule=rule_chem_flow_vol)
 
         pump_electricity(self, self.chemical_flow_vol)
 

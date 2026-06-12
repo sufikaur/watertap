@@ -27,17 +27,16 @@ from pyomo.environ import (
 )
 from pyomo.util.check_units import assert_units_consistent
 
-from idaes.core import FlowsheetBlock
-from watertap.core.solvers import get_solver
+from idaes.core import FlowsheetBlock, UnitModelCostingBlock
 from idaes.core.util.model_statistics import degrees_of_freedom
 from idaes.core.util.testing import initialization_tester
 from idaes.core.util.exceptions import ConfigurationError
-from idaes.core import UnitModelCostingBlock
 
 from watertap.unit_models.zero_order import ChemicalAdditionZO
 from watertap.core.wt_database import Database
 from watertap.core.zero_order_properties import WaterParameterBlock
 from watertap.costing.zero_order_costing import ZeroOrderCosting
+from watertap.core.solvers import get_solver
 
 solver = get_solver()
 
@@ -87,13 +86,14 @@ class TestChemicalAdditionZO:
         assert isinstance(model.fs.unit.chemical_flow_vol, Var)
         assert isinstance(model.fs.unit.solution_density, Var)
         assert isinstance(model.fs.unit.ratio_in_solution, Var)
-        assert isinstance(model.fs.unit.chemical_flow_constraint, Constraint)
+        assert isinstance(model.fs.unit.electricity, Var)
+        assert isinstance(model.fs.unit.chemical_flow_mass_constraint, Constraint)
+        assert isinstance(model.fs.unit.chemical_flow_vol_constraint, Constraint)
+        assert isinstance(model.fs.unit.electricity_consumption, Constraint)
 
         assert isinstance(model.fs.unit.lift_height, Param)
         assert isinstance(model.fs.unit.eta_pump, Param)
         assert isinstance(model.fs.unit.eta_motor, Param)
-        assert isinstance(model.fs.unit.electricity, Var)
-        assert isinstance(model.fs.unit.electricity_consumption, Constraint)
 
     @pytest.mark.component
     def test_load_parameters(self, model):
@@ -203,25 +203,25 @@ lcow_dict = {
     "ammonia": 0.0003014,
     "anti-scalant": 0.01098,
     "caustic_soda": 0.0064349,
-    "chlorine": 0.0001174,
-    "hydrochloric_acid": 0.000562,
+    "chlorine": 0.0001175,
+    "hydrochloric_acid": 0.0005627,
     "lime": 0.000441,
     "sodium_bisulfite": 0.0044602,
     "sulfuric_acid": 0.0006216,
     "ferric_chloride": 0.007249,
 }
 capex_dict = {
-    "alum": 599039.25,  # $623353.3
-    "ammonia": 46753.75,  # ~$48000
-    "anhydrous_ammonia": 198988.66,  # $200000
+    "alum": 599039.25,  # $623,353.3
+    "ammonia": 46753.75,  # ~$48,000
+    "anhydrous_ammonia": 198988.66,  # $200,000
     "anti-scalant": 55827.37,  # $56,971
-    "caustic_soda": 199551.31,  # $200427.4
-    "chlorine": 97055.37,  # $100000
+    "caustic_soda": 199551.31,  # $200,427.4
+    "chlorine": 97055.37,  # $100,000
     "hydrochloric_acid": 55827.37,  # $56,971
-    "lime": 471349.85,  # ~$500000
+    "lime": 471349.85,  # ~$500,000
     "sodium_bisulfite": 55827.37,  # $56,971
     "sulfuric_acid": 55827.37,  # $56,971
-    "ferric_chloride": 344384.58,  # ~$350000
+    "ferric_chloride": 344384.58,  # ~$350,000
 }
 
 
@@ -232,7 +232,7 @@ def test_costing(subtype):
 
     m.fs = FlowsheetBlock(dynamic=False)
 
-    m.fs.params = WaterParameterBlock(solute_list=["sulfur", "toc", "tss"])
+    m.fs.params = WaterParameterBlock(solute_list=["tss"])
 
     m.fs.costing = ZeroOrderCosting()
     m.fs.costing.base_currency = pyunits.USD_2007
@@ -242,9 +242,7 @@ def test_costing(subtype):
     )
 
     m.fs.unit.inlet.flow_mass_comp[0, "H2O"].fix(10000)
-    m.fs.unit.inlet.flow_mass_comp[0, "sulfur"].fix(1)
-    m.fs.unit.inlet.flow_mass_comp[0, "toc"].fix(2)
-    m.fs.unit.inlet.flow_mass_comp[0, "tss"].fix(3)
+    m.fs.unit.inlet.flow_mass_comp[0, "tss"].fix(0.1)
 
     m.fs.unit.load_parameters_from_database(use_default_removal=True)
     if subtype in ["lime", "anhydrous_ammonia", "chlorine"]:
