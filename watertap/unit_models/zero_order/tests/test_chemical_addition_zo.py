@@ -60,7 +60,8 @@ def test_no_subtype():
 
 class TestChemicalAdditionZO:
     @pytest.fixture(scope="class")
-    def model(self):
+    @classmethod
+    def model(cls):
         m = ConcreteModel()
         m.db = Database()
 
@@ -151,7 +152,8 @@ params = db._get_technology("chemical_addition")
 
 class TestChemicalAdditionZOsubtype:
     @pytest.fixture(scope="class")
-    def model(self):
+    @classmethod
+    def model(cls):
         m = ConcreteModel()
 
         m.fs = FlowsheetBlock(dynamic=False)
