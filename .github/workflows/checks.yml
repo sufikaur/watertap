@@ -227,7 +227,7 @@ jobs:
         echo "_ref_to_install=main" >> "$GITHUB_ENV"
 
     - name: Define install target (for PRs)
-      if: github.event.pull_request
+      if: ${{ github.event_name == 'pull_request' }}
       run: |
         echo "_repo_full_name=${{ github.event.pull_request.head.repo.full_name }}" >> "$GITHUB_ENV"
         echo "_ref_to_install=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_ENV"
@@ -249,6 +249,14 @@ jobs:
         echo '::group::Output of "idaes get-extensions" command'
         idaes get-extensions --extra petsc --verbose
         echo '::endgroup::'
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+    - name: Verify installed watertap version
+      run: |
+        python -c "import importlib.metadata as m; print(m.version('watertap'))"
+        pip show watertap
     - name: Environment summary
       uses: ./.github/actions/environment-summary
       with:
