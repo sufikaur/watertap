@@ -257,6 +257,13 @@ jobs:
       run: |
         python -c "import importlib.metadata as m; print(m.version('watertap'))"
         pip show watertap
+    - name: Debug scm context
+      run: |
+        git clone --filter=blob:none --no-checkout "https://github.com/${_repo_full_name}.git" wt-src
+        cd wt-src
+        git checkout "${_ref_to_install}"
+        git fetch --tags
+        git describe --tags --long --dirty --always
     - name: Environment summary
       uses: ./.github/actions/environment-summary
       with:
