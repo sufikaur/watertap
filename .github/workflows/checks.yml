@@ -221,12 +221,6 @@ jobs:
         conda-remove-defaults: 'true'
         auto-activate: false
 
-    - uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
-        fetch-tags: true
-        ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
-
     - name: Define install target (default)
       run: |
         echo "_repo_full_name=watertap-org/watertap" >> "$GITHUB_ENV"
@@ -235,7 +229,7 @@ jobs:
     - name: Define install target (for PRs)
       if: ${{ github.event_name == 'pull_request' }}
       run: |
-        echo "_ref_to_install=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_ENV"
+        echo "_ref_to_install=refs/pull/${{ github.event.pull_request.number }}/head" >> "$GITHUB_ENV"
 
     - name: Bootstrap packaging tools and verify installation
       run: |
@@ -258,12 +252,6 @@ jobs:
       run: |
         python -c "import importlib.metadata as m; print(m.version('watertap'))"
         pip show watertap
-    - name: Environment summary
-      uses: ./.github/actions/environment-summary
-      with:
-        python-version: ${{ matrix.python-version }}
-        os: ${{ matrix.os }}
-        job-name: User mode pytest
     - name: Run pytest
       run: |
         pytest --pyargs watertap
