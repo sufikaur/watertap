@@ -72,7 +72,7 @@ oli_api = [
 ]
 
 reaktoro = [
-    "reaktoro-pse>=0.3.0",
+    "reaktoro-pse @ git+https://github.com/watertap-org/reaktoro-pse.git@main",
 ]
 
 exposan = [
