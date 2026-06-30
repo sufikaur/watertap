@@ -99,7 +99,7 @@ dev = [
     "watertap[testing,notebooks,oli_api,reaktoro]",
 ]
 
-all = ["watertap[testing,notebooks,oli_api,reaktoro]"]
+all = ["watertap[testing,notebooks,oli_api,reaktoro,exposan]"]
 
 [tool.setuptools]
 zip-safe = false
