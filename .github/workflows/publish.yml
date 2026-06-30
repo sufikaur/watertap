@@ -1,4 +1,4 @@
-name: Create and Publish idaes-pse PyPI package
+name: Create and Publish watertap PyPI package
 
 on:
   push:
@@ -14,9 +14,7 @@ env:
   PIP_PROGRESS_BAR: "off"
   PYTHON_VERSION: "3.11"
   PACKAGE_NAME: "watertap"
-  EXTRAS_REQUIRE: "[testing]"
-  SNAPSHOT_EXTRAS: "[oli_api,notebooks]"
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,46 +26,34 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install build helpers
+      - name: Validate tag matches pyproject version
         run: |
-          pip install build wheel packaging
-
-      - name: Set version from tag in pyproject.toml
-        run: |
+          pip install packaging
           python - <<'PY'
-          import os, re, pathlib
+          import pathlib, re, os
           from packaging.version import Version, InvalidVersion
-
-          raw_tag = os.environ["GITHUB_REF_NAME"]  # must be like 1.7.0, 1.8.0.dev1, 1.7.0rc1
-
-          if raw_tag.startswith("v"):
-              raise SystemExit(f"Tag '{raw_tag}' is invalid: tags must not start with 'v'")
-
+      
+          tag = os.environ["GITHUB_REF_NAME"]  # e.g. 1.7.0
+          text = pathlib.Path("pyproject.toml").read_text()
+      
+          m = re.search(r'(?m)^version\s*=\s*"([^"]+)"', text)
+          if not m:
+              raise SystemExit("Could not find version = \"...\" in pyproject.toml")
+      
+          project_version_raw = m.group(1)
+      
           try:
-              normalized = str(Version(raw_tag))
+              tag_norm = str(Version(tag))
+              proj_norm = str(Version(project_version_raw))
           except InvalidVersion as e:
-              raise SystemExit(f"Tag '{raw_tag}' is not a valid PEP 440 version: {e}")
-
-          p = pathlib.Path("pyproject.toml")
-          txt = p.read_text()
-
-          new, n = re.subn(
-              r'(?m)^version\s*=\s*"[^"]+"',
-              f'version = "{normalized}"',
-              txt,
-              count=1,
-          )
-          if n != 1:
-              raise SystemExit("Could not find exactly one top-level version = \"...\" entry")
-
-          p.write_text(new)
-          print(f"Set pyproject.toml version to {normalized}")
+              raise SystemExit(f"Invalid version encountered: {e}")
+      
+          if tag_norm != proj_norm:
+              print(f"::warning title=Version mismatch::Tag '{tag}' ({tag_norm}) != pyproject version '{project_version_raw}' ({proj_norm})")
+              raise SystemExit(1)
+      
+          print(f"Tag matches pyproject version: {tag_norm}")
           PY
-
-      - name: Verify pyproject version
-        run: grep -n '^version = ' pyproject.toml
-
       - name: Generate dist files
         run: |
           pip install build wheel
@@ -186,7 +172,7 @@ jobs:
 
   upload-pypi:
     needs: [install-test-pypi]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
     environment: release
