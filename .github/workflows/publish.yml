@@ -29,6 +29,45 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Install build helpers
+        run: |
+          pip install build wheel packaging
+
+      - name: Set version from tag in pyproject.toml
+        run: |
+          python - <<'PY'
+          import os, re, pathlib
+          from packaging.version import Version, InvalidVersion
+
+          raw_tag = os.environ["GITHUB_REF_NAME"]  # must be like 1.7.0, 1.8.0.dev1, 1.7.0rc1
+
+          if raw_tag.startswith("v"):
+              raise SystemExit(f"Tag '{raw_tag}' is invalid: tags must not start with 'v'")
+
+          try:
+              normalized = str(Version(raw_tag))
+          except InvalidVersion as e:
+              raise SystemExit(f"Tag '{raw_tag}' is not a valid PEP 440 version: {e}")
+
+          p = pathlib.Path("pyproject.toml")
+          txt = p.read_text()
+
+          new, n = re.subn(
+              r'(?m)^version\s*=\s*"[^"]+"',
+              f'version = "{normalized}"',
+              txt,
+              count=1,
+          )
+          if n != 1:
+              raise SystemExit("Could not find exactly one top-level version = \"...\" entry")
+
+          p.write_text(new)
+          print(f"Set pyproject.toml version to {normalized}")
+          PY
+
+      - name: Verify pyproject version
+        run: grep -n '^version = ' pyproject.toml
+
       - name: Generate dist files
         run: |
           pip install build wheel
